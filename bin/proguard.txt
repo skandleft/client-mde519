@@ -1,0 +1,22 @@
+# view AndroidManifest.xml #generated:14
+-keep class android.mema.DataCollection { <init>(...); }
+
+# view AndroidManifest.xml #generated:24
+-keep class android.mema.DataSendingService { <init>(...); }
+
+# view AndroidManifest.xml #generated:7
+-keep class android.mema.MainActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:19
+-keep class android.mema.Register { <init>(...); }
+
+# onClick res/layout/main.xml #generated:19
+-keepclassmembers class * { *** createLog(...); }
+
+# onClick res/layout/main.xml #generated:27
+# onClick res/layout/register.xml #generated:40
+-keepclassmembers class * { *** register(...); }
+
+# onClick res/layout/datacollection.xml #generated:13
+-keepclassmembers class * { *** stopCollection(...); }
+

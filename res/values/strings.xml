@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MainActivity</string>
+    <string name="app_name1">DataCollection</string>
+    <string name="app_name2">Register</string>
+
+    <string name="createLog">Start collecting data</string>
+    <string name="register">Register</string>
+
+    <string name="stopCollection">Stop collecting data</string>
+
+    <string name="CorePackage">android.mema</string>
+    
+
+</resources>
