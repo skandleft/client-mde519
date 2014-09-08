@@ -278,8 +278,9 @@ public class DataCollection extends Activity implements SensorEventListener {
             if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) 
             {
                 long curTime=System.currentTimeMillis();
-                if(curTime-time>1000)
+                if(curTime-time>2000)
                 {
+                    Log.i("TIMES ARE: ",curTime+"  "+time);
                     try {
                         float x = event.values[0];
                         float y = event.values[1];
@@ -424,7 +425,8 @@ public class DataCollection extends Activity implements SensorEventListener {
         try {
             TextView tv = (TextView) this.findViewById(R.id.stopCollection);
             tv.setVisibility(View.INVISIBLE);
-            Toast.makeText(this, "Stopping the collection...", Toast.LENGTH_SHORT).show();
+            showToast("Stopping the collection...");
+            //Toast.makeText(this, "Stopping the collection...", Toast.LENGTH_SHORT).show();
             mSensorManager.unregisterListener(this);
             mSensorListener = null;
             this.unregisterReceiver(this.PowerConnectionReceiver);
@@ -472,7 +474,7 @@ public class DataCollection extends Activity implements SensorEventListener {
                     if(!found)
                     {
                         // Nothing done here yet...
-                        Toast.makeText(DataCollection.this, "No servers are available at the moment...", Toast.LENGTH_LONG).show();
+                        showToast("No servers are available at the moment...");
                         finish();
                     }
                 
@@ -486,6 +488,7 @@ public class DataCollection extends Activity implements SensorEventListener {
                    List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(1);
                    nameValuePairs.add(new BasicNameValuePair("id",username));
                    nameValuePairs.add(new BasicNameValuePair("data",file));
+                   nameValuePairs.add(new BasicNameValuePair("repl","true"));
                    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                    HttpResponse response;
                    response = client.execute(post);
@@ -507,6 +510,15 @@ public class DataCollection extends Activity implements SensorEventListener {
         }
     }
 
+    public void showToast(final String toast)
+    {
+        runOnUiThread(new Runnable() {
+            public void run()
+            {
+                Toast.makeText(DataCollection.this, toast, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     @Override
      public void onBackPressed() {
         Toast.makeText(this, "To exit the app you must first stop the data collection. To continue while app is on the background, just press the home button.", Toast.LENGTH_LONG).show();

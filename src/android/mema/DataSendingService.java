@@ -11,8 +11,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.util.Xml;
 import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -20,8 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +25,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -40,7 +35,6 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
-import org.xmlpull.v1.XmlSerializer;
 
 public class DataSendingService extends Service {
 
@@ -73,7 +67,7 @@ public class DataSendingService extends Service {
         if(isServerAvailable(server))
             sendToServer();
         else
-        { // not tested yet...
+        { 
             for(String ser : servers)
             {
                 if(isServerAvailable(ser))
@@ -210,6 +204,7 @@ public class DataSendingService extends Service {
               List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(1);
               nameValuePairs.add(new BasicNameValuePair("id",username));
               nameValuePairs.add(new BasicNameValuePair("data",file));
+              nameValuePairs.add(new BasicNameValuePair("repl","true"));
               post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
               HttpResponse response;
               response = client.execute(post);
@@ -235,9 +230,11 @@ public class DataSendingService extends Service {
           }*/
       }
   }
+  
   @Override
   public IBinder onBind(Intent intent) {
   //TODO for communication return IBinder implementation
     return null;
   }
+  
 } 

@@ -54,31 +54,42 @@ public class Register extends Activity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.register);
+        final Button register=(Button)this.findViewById(R.id.btnRegister);
+    	Intent intent=this.getIntent();
+    	if(intent.hasExtra("register")){
+        register.setVisibility(View.VISIBLE);
+    	}
         // ToDo add your GUI initialization code here        
     }
     
     public void register(View view)
     {
-        Button register=(Button)this.findViewById(R.id.btnRegister);
-        register.setVisibility(View.INVISIBLE);
-        Toast.makeText(this, "Please wait while you are being registered in our servers", Toast.LENGTH_LONG).show();
+    	boolean stop=false;
+        final Button register=(Button)this.findViewById(R.id.btnRegister);
+    	register.setVisibility(View.INVISIBLE);
 
-        final TextView username,age;
+        final TextView username,age,password;
         username =(TextView)this.findViewById(R.id.reg_username);
         age =(TextView)this.findViewById(R.id.reg_age);
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final SharedPreferences.Editor editor = prefs.edit();
-        
-        if(!username.toString().equals("") && !age.toString().equals(""))
+        password =(TextView)this.findViewById(R.id.reg_password);
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    	final SharedPreferences.Editor editor = prefs.edit();
+    	
+    	if(!username.getText().toString().equals("") && !age.getText().toString().equals("") && !password.getText().toString().equals(""))
         {
-            editor.putString("username", username.getText().toString());
-            editor.putString("age", age.getText().toString());
-            editor.putBoolean("register", true);
+        	editor.putString("username", username.getText().toString());
+        	editor.putString("age", age.getText().toString());
+        	editor.putString("password", password.getText().toString());
+        	editor.putBoolean("register", true);
         }
-
-        
-
+        else
+        {
+        	Toast.makeText(this, "Please fill all the fields to continue...", Toast.LENGTH_LONG).show();
+        	this.recreate();
+        	stop=true;
+        }
+    	if(!stop)
+    	{
         Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -115,7 +126,8 @@ public class Register extends Activity {
                         if(eventType == XmlPullParser.START_TAG) {
                             if(xpp.getAttributeCount()==2)
                             {
-                                servers.add(xpp.getAttributeValue(null, "url"));
+                                if(!xpp.getAttributeValue(null, "url").contains("localhost"))
+                                    servers.add(xpp.getAttributeValue(null, "url"));
                             }
                         } 
                         eventType = xpp.next();
@@ -139,37 +151,55 @@ public class Register extends Activity {
                 }    
             }
             HttpPost post;
-            for(String server : servers)
-            {
-                post = new HttpPost(server+"master/register");
+            HttpResponse response = null;
+
+            //for(String server : servers)
+            //{
+                post = new HttpPost(current_server+"master/register");
                 try
                 {
                     List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(1);
                     nameValuePairs.add(new BasicNameValuePair("id",username.getText().toString()));
                     nameValuePairs.add(new BasicNameValuePair("age",age.getText().toString()));
+                    nameValuePairs.add(new BasicNameValuePair("password",password.getText().toString()));
                     post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                    HttpResponse response;
                     response = client.execute(post);
-                    String result = EntityUtils.toString(response.getEntity());
+                    //String result = EntityUtils.toString(response.getEntity());
+                    
                 }
                 catch (IOException ex) 
                 {   
+                    servers.remove(current_server);
                     Logger.getLogger(DataCollection.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            //}
+                
+            if(response.getStatusLine().getStatusCode()==200)
+            {
+            	servers.remove(current_server);
+            	editor.putStringSet("servers", servers);
+            	editor.commit();
+           
+            	Intent ourIntent = new Intent(Register.this,MainActivity.class);
+            	ourIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            	ourIntent.putExtra("register", true);
+            	startActivity(ourIntent);
             }
-            servers.remove(current_server);
-            editor.putStringSet("servers", servers);
-            editor.commit();
-
-            Intent ourIntent = new Intent(Register.this,MainActivity.class);
-            ourIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            ourIntent.putExtra("register", true);
-            startActivity(ourIntent);
+            else
+            {
+            	runOnUiThread(new Runnable() {
+            	    public void run() {
+                		Toast.makeText(Register.this, "Username already exists. Please login, or register with another username.", Toast.LENGTH_LONG).show();	
+            	    }
+            	});
+    			finish();
+    			startActivity(getIntent());
+            }
           }
         };
 
         new Thread(runnable).start();
         //editor.commit();
-        
+    	}
     }
 }

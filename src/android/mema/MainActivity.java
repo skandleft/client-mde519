@@ -23,12 +23,29 @@ public class MainActivity extends Activity
             super.onCreate(savedInstanceState);
             setContentView(R.layout.main);
             TextView txt=(TextView)this.findViewById(R.id.txt);
+            TextView txt2=(TextView)this.findViewById(R.id.txt2);
+            TextView txt3=(TextView)this.findViewById(R.id.txt3);
+
             Button reg=(Button)this.findViewById(R.id.register);
+            Button login=(Button)this.findViewById(R.id.login);
             Button collect=(Button)this.findViewById(R.id.createLog);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             boolean regComplete = prefs.getBoolean("register", false);
-            if(regComplete) {
-                txt.setText("Registration complete!\nWelcome "+prefs.getString("username", ""));
+            boolean logComplete = prefs.getBoolean("login", false);
+            if(regComplete || logComplete) {
+                if(regComplete)
+                {
+                	txt.setText("Welcome "+prefs.getString("username", ""));
+            		Toast.makeText(this, "Registration is complete!", Toast.LENGTH_LONG).show();
+                }
+                else if(logComplete)
+                {
+                    txt.setText("Welcome "+prefs.getString("username", ""));
+            		Toast.makeText(this, "Login is complete!", Toast.LENGTH_LONG).show();
+                }
+                txt2.setVisibility(View.INVISIBLE);
+                txt3.setVisibility(View.INVISIBLE);
+                login.setVisibility(View.INVISIBLE);
                 reg.setVisibility(View.INVISIBLE);
             } else {
                 collect.setVisibility(View.INVISIBLE);
@@ -101,6 +118,14 @@ public class MainActivity extends Activity
         public void register(View view) throws IOException{
 
     	    Intent ourIntent = new Intent(this,Register.class);
+    	    ourIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    	    startActivity(ourIntent);
+                 
+        }
+        
+        public void login(View view) throws IOException{
+
+    	    Intent ourIntent = new Intent(this,Login.class);
     	    ourIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	    startActivity(ourIntent);
                  
