@@ -204,7 +204,6 @@ public class DataSendingService extends Service {
               List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(1);
               nameValuePairs.add(new BasicNameValuePair("id",username));
               nameValuePairs.add(new BasicNameValuePair("data",file));
-              nameValuePairs.add(new BasicNameValuePair("repl","true"));
               post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
               HttpResponse response;
               response = client.execute(post);
