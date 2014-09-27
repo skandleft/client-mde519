@@ -27,10 +27,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -65,7 +68,7 @@ public class DataCollection extends Activity implements SensorEventListener {
     //private XmlSerializer xmlSerializer = Xml.newSerializer();
     private FileOutputStream fOut = null;
     private PendingIntent pintent;
-
+    private File myFile;
     private long time;
     private String username;
     private String age;
@@ -85,7 +88,7 @@ public class DataCollection extends Activity implements SensorEventListener {
                 age=prefs.getString("age", "");
                 server=prefs.getString("current_server", "");
 
-                File myFile = new File("/data/data/android.mema/files/dataSensor.xml");
+                myFile = new File("/data/data/android.mema/files/dataSensor.xml");
                 if(myFile.exists())
                     myFile.delete();
                 
@@ -275,10 +278,68 @@ public class DataCollection extends Activity implements SensorEventListener {
 
     public void onSensorChanged(SensorEvent event) {
         Sensor sensor = event.sensor;
+        	while (myFile.length()>=10000000)
+        	{
+        		File tempFile = new File("/data/data/android.mema/files/myTempFile.xml");
+        		BufferedReader reader = null;
+				try {
+					reader = new BufferedReader(new FileReader(myFile));
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        		BufferedWriter writer = null;
+				try {
+					writer = new BufferedWriter(new FileWriter(tempFile));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+        		String currentLine;
+        		boolean insideFirstLog=false;
+        		boolean endProcess=false;
+        		try {
+					while((currentLine = reader.readLine()) != null) {
+					    String trimmedLine = currentLine.trim();
+					    if(insideFirstLog && !trimmedLine.equals("</log>"))
+					    {
+					    	continue;
+					    }
+					    else if(insideFirstLog && trimmedLine.equals("</log>"))
+					    {
+					    	insideFirstLog=false;
+					    	endProcess=true;
+					    	continue;
+					    }
+					    if(!insideFirstLog && !endProcess && trimmedLine.contains("timestamp"))
+					    {
+					    	insideFirstLog=true;
+					    	continue;
+					    }
+					    if(!currentLine.isEmpty())
+					    writer.write(currentLine+"\n");
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+        		boolean successful = tempFile.renameTo(myFile);
+        		try {
+					reader.close();
+	        		writer.close();
+	                fOut = openFileOutput("dataSensor.xml", MODE_APPEND | MODE_WORLD_READABLE);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        		
+        	}
             if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) 
             {
                 long curTime=System.currentTimeMillis();
-                if(curTime-time>2000)
+                if(curTime-time>10000)
                 {
                     Log.i("TIMES ARE: ",curTime+"  "+time);
                     try {

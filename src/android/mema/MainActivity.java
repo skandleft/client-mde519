@@ -36,12 +36,12 @@ public class MainActivity extends Activity
                 if(regComplete)
                 {
                 	txt.setText("Welcome "+prefs.getString("username", ""));
-            		Toast.makeText(this, "Registration is complete!", Toast.LENGTH_LONG).show();
+            		//Toast.makeText(this, "Registration is complete!", Toast.LENGTH_LONG).show();
                 }
                 else if(logComplete)
                 {
                     txt.setText("Welcome "+prefs.getString("username", ""));
-            		Toast.makeText(this, "Login is complete!", Toast.LENGTH_LONG).show();
+            		//Toast.makeText(this, "Login is complete!", Toast.LENGTH_LONG).show();
                 }
                 txt2.setVisibility(View.INVISIBLE);
                 txt3.setVisibility(View.INVISIBLE);

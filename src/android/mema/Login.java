@@ -83,9 +83,9 @@ public class Login extends Activity {
 
                 HttpGet get = null;
                 if(Try==1)
-                    url = "http://ultra.di.uoa.gr:8580/mde519Server/master/";
+                    url = "http://ultra.di.uoa.gr:9080/master/";
                 else if(Try==2)
-                    url = "http://donald.di.uoa.gr:8580/mde519Server/master/";
+                    url = "http://donald.di.uoa.gr:9080/master/";
                 get = new HttpGet(url);
                 Try++;
                 HttpParams httpParameters = new BasicHttpParams();
@@ -138,7 +138,7 @@ public class Login extends Activity {
                     editor.putString("username", username.getText().toString());
                     editor.putString("password", password.getText().toString());
                     editor.putBoolean("login", true);
-                    editor.putString("current_server", "http://ultra.di.uoa.gr:8580/mde519Server/");
+                    editor.putString("current_server", "http://ultra.di.uoa.gr:9080/");
 
                     editor.commit();
                     Intent ourIntent = new Intent(this,MainActivity.class);

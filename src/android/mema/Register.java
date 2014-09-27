@@ -97,9 +97,9 @@ public class Register extends Activity {
             {
                 HttpGet get = null;
                 if(Try==1)
-                    get = new HttpGet("http://ultra.di.uoa.gr:8580/mde519Server/master/");
+                    get = new HttpGet("http://ultra.di.uoa.gr:9080/master/");
                 else if(Try==2)
-                    get = new HttpGet("http://donald.di.uoa.gr:8580/mde519Server/master/");
+                    get = new HttpGet("http://donald.di.uoa.gr:9080/master/");
                 Try++;
                 HttpParams httpParameters = new BasicHttpParams();
                 int timeoutConnection = 2500;
@@ -131,13 +131,13 @@ public class Register extends Activity {
                     editor.putStringSet("servers", servers);
                     if(Try==2)
                     {
-                        current_server="http://ultra.di.uoa.gr:8580/mde519Server/";
-                        editor.putString("current_server", "http://ultra.di.uoa.gr:8580/mde519Server/");
+                        current_server="http://ultra.di.uoa.gr:9080/";
+                        editor.putString("current_server", "http://ultra.di.uoa.gr:9080/");
                     }
                     else if(Try==3)
                     {
-                        current_server="http://donald.di.uoa.gr:8580/mde519Server/";
-                        editor.putString("current_server", "http://donald.di.uoa.gr:8580/mde519Server/");
+                        current_server="http://donald.di.uoa.gr:9080/";
+                        editor.putString("current_server", "http://donald.di.uoa.gr:9080/");
                     }
 
                 } catch (IOException ex) {

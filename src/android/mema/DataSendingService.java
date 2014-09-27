@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -206,8 +207,12 @@ public class DataSendingService extends Service {
               nameValuePairs.add(new BasicNameValuePair("data",file));
               post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
               HttpResponse response;
-              response = client.execute(post);
-              String result = EntityUtils.toString(response.getEntity());
+              if(file.contains("timestamp")) // gia na mi stelnei xoris na exei kapoio log.
+              {	
+                  Log.i("DATA",file);
+            	  response = client.execute(post);
+              }
+              //String result = EntityUtils.toString(response.getEntity());
             } 
             catch (IOException ex) 
             {   
