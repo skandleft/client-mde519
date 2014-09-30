@@ -107,7 +107,7 @@ public class Login extends Activity {
                         if(xpp.getAttributeCount()==2)
                         {
                             if(!xpp.getAttributeValue(null, "url").contains("localhost"))
-                                servers.add(xpp.getAttributeValue(null, "url"));
+                                servers.add(xpp.getAttributeValue(null, "url")+"/");
                         }
                     } 
                     eventType = xpp.next();

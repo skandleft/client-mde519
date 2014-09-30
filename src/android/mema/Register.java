@@ -111,6 +111,13 @@ public class Register extends Activity {
                 try {
                     String result=null;
                     res = client.execute(get);
+                    //////////////////////////////////
+                    if(res.getStatusLine().getStatusCode()==400)
+                    {
+                    	down=true;
+                    	continue;
+                    }
+                    //////////////////////////////////
                     down=false;
                     String xml=EntityUtils.toString(res.getEntity());
                     XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -123,7 +130,7 @@ public class Register extends Activity {
                             if(xpp.getAttributeCount()==2)
                             {
                                 if(!xpp.getAttributeValue(null, "url").contains("localhost"))
-                                    servers.add(xpp.getAttributeValue(null, "url"));
+                                    servers.add(xpp.getAttributeValue(null, "url")+"/");
                             }
                         } 
                         eventType = xpp.next();

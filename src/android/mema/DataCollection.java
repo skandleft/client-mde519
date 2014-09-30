@@ -339,7 +339,7 @@ public class DataCollection extends Activity implements SensorEventListener {
             if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) 
             {
                 long curTime=System.currentTimeMillis();
-                if(curTime-time>10000)
+                if(curTime-time>2000)
                 {
                     Log.i("TIMES ARE: ",curTime+"  "+time);
                     try {
@@ -474,6 +474,13 @@ public class DataCollection extends Activity implements SensorEventListener {
             client = new DefaultHttpClient(httpParameters);
             try {
                 HttpResponse res = client.execute(get);
+                Log.i("ffffffff",res.getStatusLine().getStatusCode()+" ");
+                ///////////////////////////////////
+                if(res.getStatusLine().getStatusCode()==400)
+                {
+                	return avail;
+                }
+                ///////////////////////////////////
             } catch (IOException ex) {
                 Logger.getLogger(DataSendingService.class.getName()).log(Level.SEVERE, null, ex);
                 return avail;

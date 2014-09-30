@@ -143,6 +143,13 @@ public class DataSendingService extends Service {
             client = new DefaultHttpClient(httpParameters);
             try {
                 HttpResponse res = client.execute(get);
+                Log.i("ffffffff",res.getStatusLine().getStatusCode()+" ");
+                ///////////////////////////////////
+                if(res.getStatusLine().getStatusCode()==400)
+                {
+                	return avail;
+                }
+                ///////////////////////////////////
             } catch (IOException ex) {
                 Logger.getLogger(DataSendingService.class.getName()).log(Level.SEVERE, null, ex);
                 return avail;
