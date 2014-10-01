@@ -156,8 +156,6 @@ public class Register extends Activity {
             HttpPost post;
             HttpResponse response = null;
 
-            //for(String server : servers)
-            //{
                 post = new HttpPost(current_server+"master/register");
                 try
                 {
@@ -167,7 +165,6 @@ public class Register extends Activity {
                     nameValuePairs.add(new BasicNameValuePair("password",password.getText().toString()));
                     post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                     response = client.execute(post);
-                    //String result = EntityUtils.toString(response.getEntity());
                     
                 }
                 catch (IOException ex) 
@@ -175,7 +172,6 @@ public class Register extends Activity {
                     servers.remove(current_server);
                     Logger.getLogger(DataCollection.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            //}
                 
             if(response.getStatusLine().getStatusCode()==200)
             {
@@ -202,7 +198,6 @@ public class Register extends Activity {
         };
 
         new Thread(runnable).start();
-        //editor.commit();
     	}
     }
 }

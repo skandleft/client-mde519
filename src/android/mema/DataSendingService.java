@@ -41,17 +41,9 @@ public class DataSendingService extends Service {
 
   private FileOutputStream writer = null;
   private String server;
-  //private StringWriter testwriter = null;
-  //private XmlSerializer xmlSerializer = Xml.newSerializer();
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    //TODO do something useful
-
-      //String xml = intent.getExtras().getString("testwriter");
-      //Log.i("DATATA",xml);
-      //testwriter = new StringWriter();
-      //testwriter.write(xml);
       Boolean net=isNetworkAvailable();
       if(net)
       {
@@ -63,7 +55,6 @@ public class DataSendingService extends Service {
         server = prefs.getString("current_server", "");
         Set <String> servers = new HashSet();
         servers = prefs.getStringSet("servers", servers);
-        //if(!xml.equals(""))
         boolean found=false;
         if(isServerAvailable(server))
             sendToServer();
@@ -84,7 +75,6 @@ public class DataSendingService extends Service {
             }
             if(!found)
             {
-                // Nothing done here yet...
                 Toast.makeText(this, "No servers are available at the moment...", Toast.LENGTH_LONG).show();
                 this.stopSelf();
             }
@@ -93,14 +83,11 @@ public class DataSendingService extends Service {
         
         try {
           writer = openFileOutput("dataSensor.xml",MODE_PRIVATE);
-          //writer.write(testwriter.toString().getBytes());
-          //testwriter = openFileOutput("dataSensor2.xml",MODE_PRIVATE);
         } catch (FileNotFoundException ex) {
               Logger.getLogger(DataSendingService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
               Logger.getLogger(DataSendingService.class.getName()).log(Level.SEVERE, null, ex);
           }
-        //testwriter = new StringWriter();
 
         try {
               writer.write((new String()).getBytes());
@@ -108,19 +95,8 @@ public class DataSendingService extends Service {
              Logger.getLogger(DataSendingService.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            /*xmlSerializer.setOutput(testwriter);
-            xmlSerializer.startDocument("UTF-8",true);
-            xmlSerializer.startTag("", "logs");
-            xmlSerializer.attribute("", "user", username);
-            xmlSerializer.attribute("", "age", age);
-            writer.write(testwriter.toString().getBytes());*/
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".getBytes());
             writer.write(("<logs user=\""+username+"\" age=\""+age+"\">").getBytes());
-        /*try {
-            writer.close();
-        } catch (IOException ex) {
-            Logger.getLogger(DataSendingService.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(DataSendingService.class.getName()).log(Level.SEVERE, null, ex);
@@ -143,13 +119,10 @@ public class DataSendingService extends Service {
             client = new DefaultHttpClient(httpParameters);
             try {
                 HttpResponse res = client.execute(get);
-                Log.i("ffffffff",res.getStatusLine().getStatusCode()+" ");
-                ///////////////////////////////////
                 if(res.getStatusLine().getStatusCode()==400)
                 {
                 	return avail;
                 }
-                ///////////////////////////////////
             } catch (IOException ex) {
                 Logger.getLogger(DataSendingService.class.getName()).log(Level.SEVERE, null, ex);
                 return avail;
@@ -196,11 +169,6 @@ public class DataSendingService extends Service {
 
             writer = openFileOutput("dataSensor.xml",MODE_APPEND | MODE_WORLD_READABLE);
             writer.write("</logs>\n".getBytes());
-            /*xmlSerializer.setOutput(testwriter);
-            xmlSerializer.endTag("", "logs");
-            xmlSerializer.endDocument();*/
-            //writer.write(testwriter.toString().getBytes());
-            //writeToFile(writer.toString().getBytes(),f);
 
             String file=readFromFile();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -219,7 +187,6 @@ public class DataSendingService extends Service {
                   Log.i("DATA",file);
             	  response = client.execute(post);
               }
-              //String result = EntityUtils.toString(response.getEntity());
             } 
             catch (IOException ex) 
             {   
