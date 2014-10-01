@@ -55,17 +55,12 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
-/**
- *
- * @author lefteris
- */
+
 public class DataCollection extends Activity implements SensorEventListener {
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer, mLight, mTemperature, mProximity, mHumidity;
     public SensorEventListener mSensorListener ; 
-    //private StringWriter testwriter = null;
-    //private XmlSerializer xmlSerializer = Xml.newSerializer();
     private FileOutputStream fOut = null;
     private PendingIntent pintent;
     private File myFile;
@@ -73,7 +68,6 @@ public class DataCollection extends Activity implements SensorEventListener {
     private String username;
     private String age;
     private String server;
-    //private Handler handler=new Handler();
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -93,24 +87,12 @@ public class DataCollection extends Activity implements SensorEventListener {
                     myFile.delete();
                 
                 fOut = openFileOutput("dataSensor.xml", MODE_APPEND | MODE_WORLD_READABLE);
-                //testwriter = new StringWriter();
-                //testwriter.write("");
-                /*handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                    synchronized(countLock){
-                    Intent intent = new Intent(DataCollection.this, DataSendingService.class);
-                    Log.i("TTTT1",testwriter.toString());
-                    intent.putExtra("testwriter", testwriter.toString());
-                    startService(intent);}
-                    }}, 10*100);*/
                 this.registerReceiver(this.PowerConnectionReceiver, 
                   new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
                 collectData();
                 Calendar cal = Calendar.getInstance();
 
                 Intent intent = new Intent(this, DataSendingService.class);
-                //intent.putExtra("testwriter", testwriter.toString());
                 pintent = PendingIntent.getService(this, 1234567, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 
                 AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
@@ -131,11 +113,9 @@ public class DataCollection extends Activity implements SensorEventListener {
     public void collectData()
     {
         try {
-            //TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
             
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-            //List<Sensor> deviceSensors = mSensorManager.getSensorList(Sensor.TYPE_ALL);
             mAccelerometer=mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             mLight=mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
             mTemperature=mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
@@ -146,24 +126,6 @@ public class DataCollection extends Activity implements SensorEventListener {
             String age=prefs.getString("age", "");
             writeToFile("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".getBytes(),fOut);
             writeToFile(("<logs user=\""+username+"\" age=\""+age+"\">").getBytes(),fOut);
-            /*xmlSerializer.setOutput(testwriter);
-
-            xmlSerializer.startDocument("UTF-8",true);
-            xmlSerializer.startTag("", "logs");
-            xmlSerializer.attribute("", "user", username);
-            xmlSerializer.attribute("", "age", age);
-            Intent intent = new Intent(this, DataSendingService.class);
-            intent.putExtra("testwriter", testwriter.toString());
-            pintent = PendingIntent.getService(this, 1234567, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            List<String> listSensorType = new ArrayList<String>();
-            for(int i=0; i<deviceSensors.size(); i++){
-                System.out.println("Inside list sensors:::::::");
-                listSensorType.add((i+1)+" "+deviceSensors.get(i).getName());
-                //mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(listSensor.get(i).getType()), SensorManager.SENSOR_DELAY_NORMAL);
-                writeToFile(deviceSensors.get(i).getName().getBytes() );
-
-            }*/
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(DataCollection.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalStateException ex) {
@@ -191,18 +153,6 @@ public class DataCollection extends Activity implements SensorEventListener {
                     charging="not charging";
                 float batteryPct = (level / (float)scale)*100;
 
-                /*xmlSerializer.startTag("", "log");
-                xmlSerializer.attribute("", "timestamp", ""+System.currentTimeMillis());
-                xmlSerializer.attribute("", "type", "Battery");
-                xmlSerializer.startTag("", "value");
-                xmlSerializer.attribute("", "type", "level");
-                xmlSerializer.text(""+Math.round(batteryPct));
-                xmlSerializer.endTag("", "value");
-                xmlSerializer.startTag("", "value");
-                xmlSerializer.attribute("", "type", "charging");
-                xmlSerializer.text(""+charging);
-                xmlSerializer.endTag("", "value");
-                xmlSerializer.endTag("", "log");*/
                 
 
                 String log="<log timestamp=\""+System.currentTimeMillis()+"\" type=\"Battery\">\n<value type=\"level\">"+Math.round(batteryPct)+"</value>\n<value type=\"charging\">"+charging+"</value>\n</log>";
@@ -212,10 +162,6 @@ public class DataCollection extends Activity implements SensorEventListener {
             } catch (IllegalStateException ex) {
                 Logger.getLogger(DataCollection.class.getName()).log(Level.SEVERE, null, ex);
             }
-            /*Intent intent2 = new Intent(DataCollection.this, DataSendingService.class);
-            intent2.putExtra("testwriter", testwriter.toString());
-            pintent = PendingIntent.getService(DataCollection.this, 1234567, intent2, PendingIntent.FLAG_UPDATE_CURRENT);*/
-
         }
     };
 
@@ -347,22 +293,6 @@ public class DataCollection extends Activity implements SensorEventListener {
                         float y = event.values[1];
                         float z = event.values[2];
 
-                        /*xmlSerializer.startTag("", "log");
-                        xmlSerializer.attribute("", "timestamp", ""+System.currentTimeMillis());
-                        xmlSerializer.attribute("", "type", "Accelerometer");
-                        xmlSerializer.startTag("", "value");
-                        xmlSerializer.attribute("", "type", "xaxis");
-                        xmlSerializer.text(""+x);
-                        xmlSerializer.endTag("", "value");
-                        xmlSerializer.startTag("", "value");
-                        xmlSerializer.attribute("", "type", "yaxis");
-                        xmlSerializer.text(""+y);
-                        xmlSerializer.endTag("", "value");
-                        xmlSerializer.startTag("", "value");
-                        xmlSerializer.attribute("", "type", "zaxis");
-                        xmlSerializer.text(""+z);
-                        xmlSerializer.endTag("", "value");
-                        xmlSerializer.endTag("", "log");*/
                         String log="<log timestamp=\""+System.currentTimeMillis()+"\" type=\"Accelerometer\">\n<value type=\"xaxis\">"+Float.toString(x)+"</value>\n<value type=\"yaxis\">"+Float.toString(y)+"</value>\n<value type=\"zaxis\">"+Float.toString(z)+"</value>\n</log>";
                         writeToFile(log.getBytes(),fOut);
                         time=curTime;
@@ -377,14 +307,6 @@ public class DataCollection extends Activity implements SensorEventListener {
             try {
                 float lux = event.values[0];
 
-                /*xmlSerializer.startTag("", "log");
-                xmlSerializer.attribute("", "timestamp", ""+System.currentTimeMillis());
-                xmlSerializer.attribute("", "type", "lux");
-                xmlSerializer.startTag("", "value");
-                xmlSerializer.attribute("", "type", "lux");
-                xmlSerializer.text(""+lux);
-                xmlSerializer.endTag("", "value");
-                xmlSerializer.endTag("", "log");*/
                 String log="<log timestamp=\""+System.currentTimeMillis()+"\" type=\"Light\">\n<value type=\"lux\">"+lux+"</value>\n</log>";
                 writeToFile(log.getBytes(),fOut);
             } catch (IllegalArgumentException ex) {
@@ -397,15 +319,6 @@ public class DataCollection extends Activity implements SensorEventListener {
             try {
                 float temp = event.values[0];
 
-                /*xmlSerializer.startTag("", "log");
-                xmlSerializer.attribute("", "timestamp", ""+System.currentTimeMillis());
-                xmlSerializer.attribute("", "type", "temp");
-                xmlSerializer.startTag("", "value");
-                xmlSerializer.attribute("", "type", "temp");
-                xmlSerializer.text(""+temp);
-                xmlSerializer.endTag("", "value");
-                xmlSerializer.endTag("", "log");*/
-                
                 String log="<log timestamp=\""+System.currentTimeMillis()+"\" type=\"Temperature\">\n<value type=\"temp\">"+temp+"</value>\n</log>";
                 writeToFile(log.getBytes(),fOut);
             } catch (IllegalArgumentException ex) {
@@ -417,14 +330,6 @@ public class DataCollection extends Activity implements SensorEventListener {
             else if (sensor.getType() == Sensor.TYPE_PROXIMITY) {
             try {
                 float prox = event.values[0];
-                /*xmlSerializer.startTag("", "log");
-                xmlSerializer.attribute("", "timestamp", ""+System.currentTimeMillis());
-                xmlSerializer.attribute("", "type", "prox");
-                xmlSerializer.startTag("", "value");
-                xmlSerializer.attribute("", "type", "prox");
-                xmlSerializer.text(""+prox);
-                xmlSerializer.endTag("", "value");
-                xmlSerializer.endTag("", "log");*/
                 String log="<log timestamp=\""+System.currentTimeMillis()+"\" type=\"Proximity\">\n<value type=\"prox\">"+prox+"</value>\n</log>";
                 writeToFile(log.getBytes(),fOut);
             } catch (IllegalArgumentException ex) {
@@ -436,14 +341,6 @@ public class DataCollection extends Activity implements SensorEventListener {
             else if (sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
             try {
                 float humidity = event.values[0];
-                /*xmlSerializer.startTag("", "log");
-                xmlSerializer.attribute("", "timestamp", ""+System.currentTimeMillis());
-                xmlSerializer.attribute("", "type", "Humidity");
-                xmlSerializer.startTag("", "value");
-                xmlSerializer.attribute("", "type", "humidity");
-                xmlSerializer.text(""+humidity);
-                xmlSerializer.endTag("", "value");
-                xmlSerializer.endTag("", "log");*/
                 String log="<log timestamp=\""+System.currentTimeMillis()+"\" type=\"Humidity\">\n<value type=\"humidity\">"+humidity+"</value>\n</log>";
                 writeToFile(log.getBytes(),fOut);
             } catch (IllegalArgumentException ex) {
@@ -452,10 +349,6 @@ public class DataCollection extends Activity implements SensorEventListener {
                 Logger.getLogger(DataCollection.class.getName()).log(Level.SEVERE, null, ex);
             }
             }
-            /*Intent intent = new Intent(DataCollection.this, DataSendingService.class);
-            intent.putExtra("testwriter", testwriter.toString());
-            pintent = PendingIntent.getService(DataCollection.this, 1234567, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            */
         
     }
 
@@ -474,13 +367,10 @@ public class DataCollection extends Activity implements SensorEventListener {
             client = new DefaultHttpClient(httpParameters);
             try {
                 HttpResponse res = client.execute(get);
-                Log.i("ffffffff",res.getStatusLine().getStatusCode()+" ");
-                ///////////////////////////////////
                 if(res.getStatusLine().getStatusCode()==400)
                 {
                 	return avail;
                 }
-                ///////////////////////////////////
             } catch (IOException ex) {
                 Logger.getLogger(DataSendingService.class.getName()).log(Level.SEVERE, null, ex);
                 return avail;
@@ -494,15 +384,9 @@ public class DataCollection extends Activity implements SensorEventListener {
             TextView tv = (TextView) this.findViewById(R.id.stopCollection);
             tv.setVisibility(View.INVISIBLE);
             showToast("Stopping the collection...");
-            //Toast.makeText(this, "Stopping the collection...", Toast.LENGTH_SHORT).show();
             mSensorManager.unregisterListener(this);
             mSensorListener = null;
             this.unregisterReceiver(this.PowerConnectionReceiver);
-            //xmlSerializer.endTag("", "logs");
-            //xmlSerializer.endDocument();
-
-            //writeToFile(testwriter.toString().getBytes(),f);
-            //Log.i("FFFF",testwriter.toString());
             writeToFile("</logs>\n".getBytes(),fOut);
             try {
                    fOut.close();
